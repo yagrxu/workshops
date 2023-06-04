@@ -5,6 +5,7 @@
 ```shell
 .
 ├── main.tf
+├── variables.tf
 └── versions.tf
 ```
 
@@ -72,7 +73,6 @@ terraform init -backend-config="bucket=${TFSTATE_BUCKET}" -backend-config="key=$
 ```terraform
 
 ```
-
 
 ## Clean Up
 

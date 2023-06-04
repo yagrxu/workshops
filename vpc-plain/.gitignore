@@ -1,3 +1,2 @@
 *.tf
-.terraform.lock.hcl
 modules/
