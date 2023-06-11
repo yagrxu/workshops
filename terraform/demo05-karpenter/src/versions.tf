@@ -3,7 +3,7 @@ terraform {
     aws = {
       # https://github.com/hashicorp/terraform-provider-aws
       source  = "hashicorp/aws"
-      version = "~> 4.52.0"
+      version = "~> 5.2.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
