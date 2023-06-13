@@ -1,0 +1,29 @@
+# Terraform Workshop
+
+Workshop is planned in ap-southeast-1 region and this will be set as environment variable from very beginning
+
+``` shell
+sudo bash
+yum install jq -y
+export CURRENT_REGION="ap-southeast-1"
+export ACCOUT_ID=`aws sts get-caller-identity | jq .Account -r`
+aws s3 mb s3://my-tfstate-$ACCOUT_ID --region $CURRENT_REGION
+```
+
+## Prerequisites
+
+### Cloud9 Initialization
+
+``` shell
+DEFAULT_VPC_ID=`aws ec2 describe-vpcs --region $CURRENT_REGION | jq .Vpcs[0].VpcId -r`
+DEFAULT_SUBNET_ID=`aws ec2 describe-subnets --region $CURRENT_REGION --filter Name=vpc-id,Values=$DEFAULT_VPC_ID | jq .Subnets[1].SubnetId -r`
+
+aws cloud9 create-environment-ec2 --name devax-workshop \
+--description "This environment is for demo" \
+--instance-type m5.xlarge \
+--image-id resolve:ssm:/aws/service/cloud9/amis/amazonlinux-2-x86_64 \
+--region $CURRENT_REGION \
+--connection-type CONNECT_SSH --subnet-id $DEFAULT_SUBNET_ID
+```
+
+### Documentation
