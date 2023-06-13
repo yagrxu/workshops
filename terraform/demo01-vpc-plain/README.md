@@ -26,8 +26,8 @@
 ``` shell
 export TFSTATE_KEY=terraform-ws/vpc-plain
 export TFSTATE_BUCKET=$(aws s3 ls --output text | awk '{print $3}' | grep tfstate-)
-export TFSTATE_REGION=us-east-1
-export TF_VAR_region=us-east-1
+export TFSTATE_REGION=$CURRENT_REGION
+export TF_VAR_region=$CURRENT_REGION
 
 ```
 
@@ -62,8 +62,8 @@ cp src/variables.tf modules/vpc/variables.tf
 ```shell
 export TFSTATE_KEY=terraform-ws/vpc-plain-modules
 export TFSTATE_BUCKET=$(aws s3 ls --output text | awk '{print $3}' | grep tfstate-)
-export TFSTATE_REGION=us-east-1
-export TF_VAR_region=us-east-1
+export TFSTATE_REGION=$CURRENT_REGION
+export TF_VAR_region=$CURRENT_REGION
 ```
 
 ```shell
