@@ -1,8 +1,20 @@
-# Indicate where to source the terraform module from.
-# The URL used here is a shorthand for
-# "tfr://registry.terraform.io/terraform-aws-modules/vpc/aws?version=3.5.0".
-# Note the extra `/` after the protocol is required for the shorthand
-# notation.
+# dev/terragrunt.hcl
+remote_state {
+  backend = "s3"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+  config = {
+    bucket = get_env("TFSTATE_BUCKET", "")
+
+    key = "terragrunt/demo/dev"
+    region         = get_env("DEFAULT_REGION", "us-east-1")
+    encrypt        = true
+    dynamodb_table = "my-lock-table"
+  }
+}
+
 terraform {
   source = "tfr:///terraform-aws-modules/vpc/aws?version=4.0.2"
 }
@@ -13,7 +25,8 @@ generate "provider" {
   if_exists = "overwrite_terragrunt"
   contents = <<EOF
 provider "aws" {
-  region = "us-east-1"
+  region = get_env("DEFAULT_REGION", "us-east-1")
+  version = "~> 4.52.0"
 }
 EOF
 }
