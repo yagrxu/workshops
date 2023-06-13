@@ -14,3 +14,6 @@ terragrunt --version
 
 ## Hello World
 
+``` shell
+cd src/dev
+```

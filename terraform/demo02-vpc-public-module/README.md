@@ -41,7 +41,7 @@ module "vpc" {
 
 ``` shell
 export TFSTATE_KEY=terraform-ws/vpc-public-module
-export TFSTATE_BUCKET=my-tfstate-$ACCOUT_ID
+export TFSTATE_BUCKET=my-tfstate-$ACCOUNT_ID
 export TFSTATE_REGION=$CURRENT_REGION
 export TF_VAR_region=$CURRENT_REGION
 

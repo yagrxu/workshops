@@ -6,8 +6,8 @@ Workshop is planned in ap-southeast-1 region and this will be set as environment
 sudo bash
 yum install jq -y
 export CURRENT_REGION="ap-southeast-1"
-export ACCOUT_ID=`aws sts get-caller-identity | jq .Account -r`
-aws s3 mb s3://my-tfstate-$ACCOUT_ID --region $CURRENT_REGION
+export ACCOUNT_ID=`aws sts get-caller-identity | jq .Account -r`
+aws s3 mb s3://my-tfstate-$ACCOUNT_ID --region $CURRENT_REGION
 ```
 
 ## Prerequisites

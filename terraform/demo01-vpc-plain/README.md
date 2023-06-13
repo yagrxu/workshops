@@ -25,7 +25,7 @@
 
 ``` shell
 export TFSTATE_KEY=terraform-ws/vpc-plain
-export TFSTATE_BUCKET=my-tfstate-$ACCOUT_ID
+export TFSTATE_BUCKET=my-tfstate-$ACCOUNT_ID
 export TFSTATE_REGION=$CURRENT_REGION
 export TF_VAR_region=$CURRENT_REGION
 
@@ -61,7 +61,7 @@ cp src/variables.tf modules/vpc/variables.tf
 
 ```shell
 export TFSTATE_KEY=terraform-ws/vpc-plain-modules
-export TFSTATE_BUCKET=my-tfstate-$ACCOUT_ID
+export TFSTATE_BUCKET=my-tfstate-$ACCOUNT_ID
 export TFSTATE_REGION=$CURRENT_REGION
 export TF_VAR_region=$CURRENT_REGION
 ```

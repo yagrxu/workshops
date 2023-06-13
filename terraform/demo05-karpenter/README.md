@@ -56,9 +56,9 @@ module "vpc" {
 
 ``` shell
 export TFSTATE_KEY=terraform-ws/karpenter
-export TFSTATE_BUCKET=$(aws s3 ls --output text | awk '{print $3}' | grep tfstate-)
-export TFSTATE_REGION=us-east-1
-export TF_VAR_region=us-east-1
+export TFSTATE_BUCKET=my-tfstate-$ACCOUNT_ID
+export TFSTATE_REGION=$CURRENT_REGION
+export TF_VAR_region=$CURRENT_REGION
 
 ```
 
@@ -80,6 +80,13 @@ terraform apply --auto-approve
 
 ```
 
+## Configure Kubectl
+
+``` shell
+aws eks update-kubeconfig --name demo  --kubeconfig ~/.kube/config --region ap-southeast-1 --alias demo
+
+```
+
 ## Test Karpenter
 
 ### Load Generator
@@ -87,9 +94,19 @@ terraform apply --auto-approve
 refer to this page [HorizontalPodAutoscaler Walkthrough](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
 
 ``` shell
-kubectl run -i --tty load-generator --image=busybox /bin/sh
+kubectl apply -f https://k8s.io/examples/application/php-apache.yaml
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=100
+kubectl run -i --tty load-generator01 --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+kubectl run -i --tty load-generator02 --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+kubectl run -i --tty load-generator03 --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
 
 # kubectl --generator=run-pod/v1 run -i --tty load-generator --image=busybox /bin/sh
+```
+
+```shell
+watch -n 5 kubectl get hpa
+watch -n 5 kubectl get pods -A
 ```
 
 ## Clean Up

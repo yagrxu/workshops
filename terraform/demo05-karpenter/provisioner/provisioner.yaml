@@ -26,6 +26,6 @@ metadata:
   name: default
 spec:
   subnetSelector:
-    karpenter.sh/discovery: grafana-demo
+    karpenter.sh/discovery: demo
   securityGroupSelector:
-    karpenter.sh/discovery: grafana-demo
+    karpenter.sh/discovery: demo
