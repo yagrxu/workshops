@@ -41,9 +41,9 @@ module "vpc" {
 
 ``` shell
 export TFSTATE_KEY=terraform-ws/vpc-public-module
-export TFSTATE_BUCKET=$(aws s3 ls --output text | awk '{print $3}' | grep tfstate-)
-export TFSTATE_REGION=us-east-1
-export TF_VAR_region=us-east-1
+export TFSTATE_BUCKET=my-tfstate-$ACCOUT_ID
+export TFSTATE_REGION=$CURRENT_REGION
+export TF_VAR_region=$CURRENT_REGION
 
 ```
 
@@ -70,7 +70,7 @@ terraform apply --auto-approve
 ### Create a new VPC
 
 ```shell
-export DEFAULT_REGION=us-east-1
+export DEFAULT_REGION=$CURRENT_REGION
 export VPC_ID=`aws ec2 create-vpc --cidr-block 10.0.0.0/16 --region $DEFAULT_REGION | jq -r .Vpc.VpcId`
 aws ec2 create-tags --resources $VPC_ID --tags Key=Name,Value='another vpc' --region $DEFAULT_REGION
 export SUBNET_ID=`aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.10.0/24 --region $DEFAULT_REGION | jq -r .Subnet.SubnetId`
@@ -111,6 +111,8 @@ terraform import aws_subnet.demo $SUBNET_ID
 ```
 
 ## Setup Transit Gateway
+
+Add the code below to `network.tf`
 
 ```terraform
 
@@ -156,6 +158,19 @@ resource "aws_route" "imported_vpc_route" {
   destination_cidr_block = local.vpc_cidr
   transit_gateway_id     = aws_ec2_transit_gateway.demo.id
 }
+
+```
+
+```shell
+
+terraform plan
+
+```
+
+```shell
+
+terraform apply --auto-approve -target=module.vpc
+terraform apply --auto-approve
 
 ```
 
