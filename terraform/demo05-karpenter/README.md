@@ -84,7 +84,7 @@ terraform apply --auto-approve
 ## Configure Kubectl
 
 ``` shell
-aws eks update-kubeconfig --name demo  --kubeconfig ~/.kube/config --region ap-southeast-1 --alias demo
+aws eks update-kubeconfig --name demo05  --kubeconfig ~/.kube/config --region ap-southeast-1 --alias demo05
 
 ```
 
