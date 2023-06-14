@@ -74,14 +74,15 @@ export DEFAULT_REGION=$CURRENT_REGION
 export VPC_ID=`aws ec2 create-vpc --cidr-block 10.0.0.0/16 --region $DEFAULT_REGION | jq -r .Vpc.VpcId`
 aws ec2 create-tags --resources $VPC_ID --tags Key=Name,Value='another vpc' --region $DEFAULT_REGION
 export SUBNET_ID=`aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.10.0/24 --region $DEFAULT_REGION | jq -r .Subnet.SubnetId`
-
-# export IGW_ID=`aws ec2 create-internet-gateway --region $DEFAULT_REGION | jq -r .InternetGateway.InternetGatewayId`
-
-# aws ec2 attach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID
-
 ```
 
 ### Prepare Resource
+
+add the code below to `main.tf`
+
+```shell
+cat ../demo/import.tf >> main.tf
+```
 
 ```terraform
 
@@ -104,6 +105,8 @@ resource "aws_subnet" "demo" {
 }
 
 ```
+
+import resources
 
 ```shell
 terraform import aws_vpc.demo $VPC_ID
