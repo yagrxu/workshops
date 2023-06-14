@@ -114,6 +114,10 @@ terraform import aws_subnet.demo $SUBNET_ID
 
 Add the code below to `network.tf`
 
+``` shell
+cp ../demo/network.tf network.tf
+```
+
 ```terraform
 
 resource "aws_ec2_transit_gateway" "demo" {
