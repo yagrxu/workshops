@@ -16,4 +16,7 @@ terragrunt --version
 
 ``` shell
 cd src/dev
+terragrunt init
+terragrunt apply
+terragrunt destroy
 ```
