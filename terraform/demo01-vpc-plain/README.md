@@ -33,6 +33,7 @@ export TF_VAR_region=$CURRENT_REGION
 
 ```shell
 
+cd src
 terraform init -backend-config="bucket=${TFSTATE_BUCKET}" -backend-config="key=${TFSTATE_KEY}" -backend-config="region=${TFSTATE_REGION}"
 
 ```
@@ -49,14 +50,20 @@ terraform apply --auto-approve
 
 ```
 
+```shell
+
+terraform destroy --auto-approve
+
+```
+
 ## Have your Own Module
 
 ```shell
-
-mkdir -r modules/vpc
+cd .. # move to upper folder
+mkdir -p modules/vpc
 cp src/main.tf modules/vpc/main.tf
 cp src/variables.tf modules/vpc/variables.tf
-
+cp module-demo/main.tf main.tf
 ```
 
 ```shell
@@ -67,7 +74,7 @@ export TF_VAR_region=$CURRENT_REGION
 ```
 
 ```shell
-terraform init -backend-config="bucket=${TFSTATE_BUCKET}" -backend-config="key=${TFSTATE_KEY}" -backend-config="region=${TFSTATE_REGION}"
+terraform init -backend-config="bucket=${TFSTATE_BUCKET}" -backend-config="key=${TFSTATE_KEY}" -backend-config="region=${TFSTATE_REGION}" -reconfigure
 ```
 
 ```terraform
