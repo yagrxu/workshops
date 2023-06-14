@@ -9,7 +9,7 @@ remote_state {
     bucket = get_env("TFSTATE_BUCKET", "")
 
     key = "terragrunt/demo/dev"
-    region         = get_env("DEFAULT_REGION", "us-east-1")
+    region         = get_env("TFSTATE_REGION", "us-east-1")
     encrypt        = true
     dynamodb_table = "my-lock-table"
   }
@@ -25,7 +25,6 @@ generate "provider" {
   if_exists = "overwrite_terragrunt"
   contents = <<EOF
 provider "aws" {
-  region = get_env("DEFAULT_REGION", "us-east-1")
   version = "~> 4.52.0"
 }
 EOF
