@@ -77,8 +77,9 @@ export TF_VAR_region=$CURRENT_REGION
 terraform init -backend-config="bucket=${TFSTATE_BUCKET}" -backend-config="key=${TFSTATE_KEY}" -backend-config="region=${TFSTATE_REGION}" -reconfigure
 ```
 
-```terraform
+```shell
 
+terraform apply --auto-approve
 ```
 
 ## Clean Up

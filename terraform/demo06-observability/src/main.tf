@@ -118,14 +118,71 @@ module "eks" {
   create_cloudwatch_log_group = false
   # create_aws_auth_configmap = true 
 
-  # aws_auth_roles = [
-  #   {
-  #     rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
-  #     username = var.username
-  #     groups   = ["system:masters"]
-  #   },
-  # ]
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
+      username = var.username
+      groups   = ["system:masters"]
+    },
+  ]
   tags = {
     "karpenter.sh/discovery" = var.cluster_name
+  }
+}
+
+
+module "observability" {
+  source                  = "./observability"
+  adot_namespace          = "opentelemetry-operator-system"
+  cluster_name            = var.cluster_name
+  cluster_oidc_issuer_url = module.eks.cluster_oidc_issuer_url
+  region                  = var.region
+  subnet_ids              = module.vpc.private_subnets
+  security_group_ids      = [module.eks.node_security_group_id, module.eks.cluster_primary_security_group_id]
+  grafana_username        = var.grafana_username
+  depends_on = [
+    module.eks
+  ]
+}
+
+data "aws_iam_policy" "ebs_csi_policy" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+module "irsa-ebs-csi" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+
+  create_role                   = true
+  role_name                     = "AmazonEKSTFEBSCSIRole-${var.cluster_name}"
+  provider_url                  = replace(module.eks.oidc_provider, "https://", "")
+  role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+}
+
+resource "aws_eks_addon" "ebs-csi" {
+  cluster_name             = var.cluster_name
+  addon_name               = "aws-ebs-csi-driver"
+  addon_version            = "v1.5.2-eksbuild.1"
+  service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
+  tags = {
+    "eks_addon" = "ebs-csi"
+    "terraform" = "true"
+  }
+}
+
+resource "aws_ecr_repository" "app-hello" {
+  name                 = "grafana-demo-hello"
+  image_tag_mutability = "MUTABLE"
+  force_delete         = true
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+}
+resource "aws_ecr_repository" "app-world" {
+  name                 = "grafana-demo-world"
+  image_tag_mutability = "MUTABLE"
+  force_delete         = true
+  image_scanning_configuration {
+    scan_on_push = false
   }
 }

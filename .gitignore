@@ -3,5 +3,5 @@
 **/.DS_Store
 **/node_modules/
 **/.terragrunt-cache/
-
+**/__pycache__/
 
