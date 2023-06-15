@@ -80,6 +80,12 @@ terraform apply --auto-approve
 
 ```
 
+```shell
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.23.17/2023-05-11/bin/linux/amd64/kubectl
+
+/usr/bin/kubectl
+```
+
 ## Clean Up
 
 ```shell
