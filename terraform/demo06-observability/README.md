@@ -79,8 +79,11 @@ terraform plan
 ```shell
 
 terraform apply --auto-approve
+aws eks update-kubeconfig --name demo06 --region ap-southeast-1
 
 ```
+
+TODO: change prometheus endpoint URL in collector.yaml
 
 ``` shell
 cd .. # back to parent directory
@@ -116,7 +119,7 @@ docker push $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com/grafana-demo-hello
 ```
 
 ``` shell
-cd world
+cd ../world
 #!/bin/bash
 
 get_current_directory() {
@@ -144,6 +147,21 @@ docker tag grafana-demo-world:latest $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazona
 docker push $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com/grafana-demo-world:$DOCKER_IMAGE_VERSION
 
 ```
+
+### Deploy Application
+
+``` shell
+cd ..
+kubectl apply -f ./k8s-resources/deployment.yaml
+kubectl apply -f ./k8s-resources/service.yaml
+
+```
+
+## Configure Grafana
+
+- Prometheus
+- X-Ray
+- Loki
 
 ## Clean Up
 

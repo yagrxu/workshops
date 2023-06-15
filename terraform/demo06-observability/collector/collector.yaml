@@ -225,7 +225,7 @@ spec:
 
       ## for adot addon 0.58.0 and above     
       prometheusremotewrite:
-        endpoint: "https://aps-workspaces.ap-southeast-1.amazonaws.com/workspaces/ws-46891aba-2a9c-4334-9e58-a168d0e44a43/api/v1/remote_write"
+        endpoint: "https://aps-workspaces.ap-southeast-1.amazonaws.com/workspaces/ws-19085f40-36ea-4c6a-b0b3-398ea123c0e2/api/v1/remote_write"
         auth:
           authenticator: sigv4auth
 
