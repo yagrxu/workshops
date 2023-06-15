@@ -54,6 +54,8 @@ module "vpc" {
 
 ## Run Through
 
+### Credentials for Loki
+
 ``` shell
 export TFSTATE_KEY=terraform-ws/observability
 export TFSTATE_BUCKET=my-tfstate-$ACCOUNT_ID
@@ -80,97 +82,66 @@ terraform apply --auto-approve
 
 ```
 
-## Import Existing VPC
+``` shell
+cd .. # back to parent directory
+kubectl apply -f ./collector/collector.yaml
+```
 
-### Create a new VPC
+``` shell
+cd application/hello
+get_current_directory() {
+    current_file="${PWD}/${0}"
+    echo "${current_file%/*}"
+}
 
-```shell
-export DEFAULT_REGION=us-east-1
-export VPC_ID=`aws ec2 create-vpc --cidr-block 10.0.0.0/16 --region $DEFAULT_REGION | jq -r .Vpc.VpcId`
-aws ec2 create-tags --resources $VPC_ID --tags Key=Name,Value='another vpc' --region $DEFAULT_REGION
-export SUBNET_ID=`aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.10.0/24 --region $DEFAULT_REGION | jq -r .Subnet.SubnetId`
+CWD=$(get_current_directory)
+echo "$CWD"
 
-# export IGW_ID=`aws ec2 create-internet-gateway --region $DEFAULT_REGION | jq -r .InternetGateway.InternetGatewayId`
+cd $CWD
 
-# aws ec2 attach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID
+if [ ! -z "$1" ]
+then
+      echo "\$1 is NOT empty - $1"
+      export DOCKER_IMAGE_VERSION="$1"
+else
+      echo "\$1 is empty"
+      export DOCKER_IMAGE_VERSION="v0.1"
+fi
+
+aws ecr get-login-password --region $CURRENT_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com
+docker build . -t grafana-demo-hello:latest
+docker tag grafana-demo-hello:latest $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com/grafana-demo-hello:$DOCKER_IMAGE_VERSION
+docker push $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com/grafana-demo-hello:$DOCKER_IMAGE_VERSION
 
 ```
 
-### Prepare Resource
+``` shell
+cd world
+#!/bin/bash
 
-```terraform
-
-locals {
-  demo_cidr         = "10.1.1.0/24"
-  imported_vpc_cidr = "10.1.0.0/16"
+get_current_directory() {
+    current_file="${PWD}/${0}"
+    echo "${current_file%/*}"
 }
 
-resource "aws_vpc" "demo" {
-  cidr_block = local.imported_vpc_cidr
-  tags = {
-    Name = "imported VPC"
-  }
-}
+CWD=$(get_current_directory)
+echo "$CWD"
 
-resource "aws_subnet" "demo" {
-  vpc_id     = aws_vpc.demo.id
-  cidr_block = local.demo_cidr
-  # availability_zone = "us-east-1a"
-}
+cd $CWD
 
-```
+if [ ! -z "$1" ]
+then
+      echo "\$1 is NOT empty - $1"
+      export DOCKER_IMAGE_VERSION="$1"
+else
+      echo "\$1 is empty"
+      export DOCKER_IMAGE_VERSION="v0.1"
+fi
 
-```shell
-terraform import aws_vpc.demo $VPC_ID
-terraform import aws_subnet.demo $SUBNET_ID
-```
-
-## Setup Transit Gateway
-
-```terraform
-
-resource "aws_ec2_transit_gateway" "demo" {
-  description = "demo"
-}
-
-resource "aws_ec2_transit_gateway_vpc_attachment" "vpc_module_public_subnets_attachment" {
-  subnet_ids         = module.vpc.public_subnets
-  transit_gateway_id = aws_ec2_transit_gateway.demo.id
-  vpc_id             = module.vpc.vpc_id
-}
-
-resource "aws_ec2_transit_gateway_vpc_attachment" "vpc_imported_subnets_attachment" {
-  subnet_ids         = [aws_subnet.demo.id]
-  transit_gateway_id = aws_ec2_transit_gateway.demo.id
-  vpc_id             = aws_vpc.demo.id
-}
-
-data "aws_route_tables" "public_module_route_tables" {
-  vpc_id = module.vpc.vpc_id
-
-  # filter {
-  #   name   = "tag:kubernetes.io/kops/role"
-  #   values = ["private*"]
-  # }
-}
-
-data "aws_route_table" "imported_vpc_route_table" {
-  vpc_id = aws_vpc.demo.id
-}
-
-resource "aws_route" "public_module_vpc_route" {
-  count                  = length(data.aws_route_tables.public_module_route_tables.ids)
-  route_table_id         = tolist(data.aws_route_tables.public_module_route_tables.ids)[count.index]
-  destination_cidr_block = local.imported_vpc_cidr
-  transit_gateway_id     = aws_ec2_transit_gateway.demo.id
-}
-
-resource "aws_route" "imported_vpc_route" {
-  count                  = length(module.vpc.private_subnets_cidr_blocks)
-  route_table_id         = data.aws_route_table.imported_vpc_route_table.id
-  destination_cidr_block = local.vpc_cidr
-  transit_gateway_id     = aws_ec2_transit_gateway.demo.id
-}
+aws ecr get-login-password --region $CURRENT_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com
+docker build . -t grafana-demo-world:latest
+docker tag grafana-demo-world:latest $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com/grafana-demo-world:$DOCKER_IMAGE_VERSION
+docker push $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com/grafana-demo-world:$DOCKER_IMAGE_VERSION
 
 ```
 

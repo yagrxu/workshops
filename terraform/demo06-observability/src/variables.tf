@@ -4,7 +4,7 @@ variable "region" {
 }
 
 variable "cluster_name" {
-  default = "demo"
+  default = "demo06"
 }
 variable "username" {
   default = "yagrxu"

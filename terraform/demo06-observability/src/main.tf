@@ -14,12 +14,13 @@ module "vpc" {
 
   # 对于使用karpenter做资源管理的集群来说，需要给资源所在的子网打tag来进行识别。
   private_subnet_tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "karpenter.sh/discovery"                    = var.cluster_name
     "kubernetes.io/role/internal-elb"           = 1
   }
   public_subnet_tags = {
-    "kubernetes.io/role/elb	" = 1
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                    = 1
   }
 }
 
@@ -136,10 +137,11 @@ module "observability" {
   adot_namespace          = "opentelemetry-operator-system"
   cluster_name            = var.cluster_name
   cluster_oidc_issuer_url = module.eks.cluster_oidc_issuer_url
+  oidc_provider_arn       = module.eks.oidc_provider_arn
   region                  = var.region
   subnet_ids              = module.vpc.private_subnets
+  account_id              = data.aws_caller_identity.current.account_id
   security_group_ids      = [module.eks.node_security_group_id, module.eks.cluster_primary_security_group_id]
-  grafana_username        = var.grafana_username
   depends_on = [
     module.eks
   ]

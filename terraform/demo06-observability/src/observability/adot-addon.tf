@@ -10,16 +10,16 @@ resource "aws_eks_addon" "adot" {
     kubernetes_role_binding.eks_addon_manager
   ]
 
-  cluster_name = var.cluster_name
-  addon_name   = "adot"
+  cluster_name  = var.cluster_name
+  addon_name    = "adot"
   addon_version = "v0.61.0-eksbuild.1"
 }
 
 module "iam_assumable_role_adot_collector" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "5.9.0"
-  create_role                   = true
-  role_name                     = local.role_name
+  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version     = "5.9.0"
+  create_role = true
+  role_name   = local.role_name
   # force_detach_policies         = true
   provider_url                  = var.cluster_oidc_issuer_url
   oidc_fully_qualified_subjects = ["system:serviceaccount:observability:adot-collector"]
@@ -58,27 +58,18 @@ resource "kubernetes_service_account" "adot-collector" {
   ]
 
   metadata {
-    name = "adot-collector"
+    name      = "adot-collector"
     namespace = "observability"
     labels = {
       "app.kubernetes.io/instance" = "adot-collector"
-      "app.kubernetes.io/name" = "adot-collector"
+      "app.kubernetes.io/name"     = "adot-collector"
     }
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_adot_collector.iam_role_arn
     }
-  }  
+  }
 }
 
-# resource "kubernetes_namespace" "opentelemetry_operator_system" {
-#   metadata {
-#     name = "opentelemetry-operator-system"
-
-#     labels = {
-#       control-plane = "controller-manager"
-#     }
-#   }
-# }
 
 resource "kubernetes_cluster_role" "eks_addon_manager_otel" {
   metadata {
@@ -226,6 +217,8 @@ resource "kubernetes_cluster_role" "eks_addon_manager_otel" {
     api_groups = ["authorization.k8s.io"]
     resources  = ["subjectaccessreviews"]
   }
+
+  depends_on = [kubernetes_namespace.adot_namespace]
 }
 
 resource "kubernetes_cluster_role_binding" "eks_addon_manager_otel" {
@@ -316,6 +309,8 @@ resource "kubernetes_role" "eks_addon_manager" {
     api_groups = [""]
     resources  = ["pods"]
   }
+
+  depends_on = [kubernetes_namespace.adot_namespace]
 }
 
 resource "kubernetes_role_binding" "eks_addon_manager" {
@@ -334,6 +329,7 @@ resource "kubernetes_role_binding" "eks_addon_manager" {
     kind      = "Role"
     name      = "eks:addon-manager"
   }
+  depends_on = [kubernetes_namespace.adot_namespace]
 }
 
 resource "kubernetes_cluster_role" "otel-prometheus-role" {
@@ -343,7 +339,7 @@ resource "kubernetes_cluster_role" "otel-prometheus-role" {
 
   rule {
     api_groups = [""]
-    resources  = ["nodes", "pods","services","endpoints","nodes/proxy"]
+    resources  = ["nodes", "pods", "services", "endpoints", "nodes/proxy"]
     verbs      = ["get", "list", "watch"]
   }
 
@@ -355,7 +351,7 @@ resource "kubernetes_cluster_role" "otel-prometheus-role" {
 
   rule {
     non_resource_urls = ["/metrics"]
-    verbs      = ["get"]
+    verbs             = ["get"]
   }
 
 }

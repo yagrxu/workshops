@@ -19,7 +19,7 @@ else
       export DOCKER_IMAGE_VERSION="v0.1"
 fi
 
-aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 613477150601.dkr.ecr.ap-southeast-1.amazonaws.com
+aws ecr get-login-password --region $CURRENT_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com
 docker build . -t grafana-demo-world:latest
-docker tag grafana-demo-world:latest 613477150601.dkr.ecr.ap-southeast-1.amazonaws.com/grafana-demo-world:$DOCKER_IMAGE_VERSION
-docker push 613477150601.dkr.ecr.ap-southeast-1.amazonaws.com/grafana-demo-world:$DOCKER_IMAGE_VERSION
+docker tag grafana-demo-world:latest $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com/grafana-demo-world:$DOCKER_IMAGE_VERSION
+docker push $ACCOUNT_ID.dkr.ecr.$CURRENT_REGION.amazonaws.com/grafana-demo-world:$DOCKER_IMAGE_VERSION
