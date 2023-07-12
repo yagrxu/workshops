@@ -5,3 +5,6 @@
 **/.terragrunt-cache/
 **/__pycache__/
 
+**/*.jar
+**/.mvn/
+
