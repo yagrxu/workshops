@@ -5,14 +5,14 @@
 ### Cloud9 Initialization
 
 ``` shell
-DEFAULT_VPC_ID=`aws ec2 describe-vpcs --region $CURRENT_REGION | jq .Vpcs[0].VpcId -r`
-DEFAULT_SUBNET_ID=`aws ec2 describe-subnets --region $CURRENT_REGION --filter Name=vpc-id,Values=$DEFAULT_VPC_ID | jq .Subnets[1].SubnetId -r`
+DEFAULT_VPC_ID=`aws ec2 describe-vpcs --region $AWS_REGION | jq .Vpcs[0].VpcId -r`
+DEFAULT_SUBNET_ID=`aws ec2 describe-subnets --region $AWS_REGION --filter Name=vpc-id,Values=$DEFAULT_VPC_ID | jq .Subnets[1].SubnetId -r`
 
 aws cloud9 create-environment-ec2 --name devax-workshop \
 --description "This environment is for demo" \
 --instance-type m5.xlarge \
 --image-id resolve:ssm:/aws/service/cloud9/amis/amazonlinux-2-x86_64 \
---region $CURRENT_REGION \
+--region $AWS_REGION \
 --connection-type CONNECT_SSH --subnet-id $DEFAULT_SUBNET_ID
 ```
 
