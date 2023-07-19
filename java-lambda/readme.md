@@ -12,7 +12,7 @@ https://github.com/awslabs/aws-serverless-java-container
 <dependency>
     <groupId>com.amazonaws.serverless</groupId>
     <artifactId>aws-serverless-java-container-springboot2</artifactId>
-    <version>${springboot2.aws.version}</version>
+    <version>1.9.3</version>
 </dependency>
 ```
 
@@ -20,7 +20,7 @@ https://github.com/awslabs/aws-serverless-java-container
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-shade-plugin</artifactId>
-    <version>3.3.0</version>
+    <version>3.4.1</version>
     <configuration>
         <createDependencyReducedPom>false</createDependencyReducedPom>
     </configuration>
