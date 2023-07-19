@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/")
 public class DemoController {
-    @GetMapping(value="health", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "health", produces = MediaType.APPLICATION_JSON_VALUE)
     public String healthCheck() {
         return "{\"status\":\"ok!\"}";
     }

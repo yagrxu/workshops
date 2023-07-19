@@ -15,6 +15,7 @@ Resources:
       AutoPublishAlias: production
       SnapStart:
         ApplyOn: PublishedVersions
+      Tracing: Active
       Architectures:
         - x86_64
       MemorySize: 2048
