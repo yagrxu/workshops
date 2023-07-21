@@ -1,6 +1,6 @@
 # workshops
 
-## 本地开发环境准备
+## 使用SageMaker 部署大语言模型
 
 ### 创建 SageMaker 执行角色
 
