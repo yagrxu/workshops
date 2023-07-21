@@ -1,0 +1,26 @@
+
+## https://8kiscx161l.execute-api.us-east-1.amazonaws.com/Stage
+## http://127.0.0.1:3000
+### Post
+POST http://127.0.0.1:3000/chat
+Content-Type: application/json
+
+{
+  "text": "翻译下面的文档为莎士比亚风格的英文：白日依山尽，黄河入海流"
+}
+
+
+
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"text": "翻译下面的文档为莎士比亚风格的英文：白日依山尽，黄河入海流"}' \
+  http://127.0.0.1:3000/chat
+
+
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"text": "翻译下面的文档为莎士比亚风格的英文：白日依山尽，黄河入海流"}' \
+  https://8kiscx161l.execute-api.us-east-1.amazonaws.com/Stage/chat
+
+
+
+### GET
+GET https://8kiscx161l.execute-api.us-east-1.amazonaws.com/Stage/health
