@@ -7,4 +7,5 @@
 
 **/*.jar
 **/.mvn/
-
+**/.aws-sam/
+.vs_code
