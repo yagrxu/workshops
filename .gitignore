@@ -9,3 +9,6 @@
 **/.mvn/
 **/.aws-sam/
 .vs_code
+
+**/*.tar.gz
+.env

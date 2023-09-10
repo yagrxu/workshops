@@ -2,6 +2,7 @@ package com.example.springdemo.controller;
 
 import java.nio.charset.Charset;
 
+// import org.opensearch.client.base.RestClientTransport;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import software.amazon.awssdk.services.sagemakerruntime.model.InvokeEndpointResp
 public class DemoController {
     @GetMapping(value = "health", produces = MediaType.APPLICATION_JSON_VALUE)
     public String healthCheck() {
+        // RestClientTransport t;
         return "{\"status\":\"ok!\"}";
     }
 
@@ -33,9 +35,9 @@ public class DemoController {
                 .region(region)
                 .build();
 
-        String payload = "{\"instances\": [{\"data\": " + postStr + "}]}";
+        // String payload = "{\"instances\": [{\"data\": " + postStr + "}]}";
 
-        System.out.println(payload);
+        // System.out.println(payload);
 
         return invokeSpecficEndpoint(
                 runtimeClient,
